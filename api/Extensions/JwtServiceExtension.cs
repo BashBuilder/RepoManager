@@ -9,10 +9,12 @@ public static class JwtServiceExtension
 
   public static IServiceCollection AddJwtAuthenticationService(this IServiceCollection services, IConfiguration configuration)
   {
+    var issuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"] ?? throw new ArgumentNullException("Jwt secret not found")));
+
     var tokenValidationParameters = new TokenValidationParameters()
     {
       ValidateIssuerSigningKey = true,
-      IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"] ?? throw new ArgumentNullException("Jwt secret not found"))),
+      IssuerSigningKey = issuerSigningKey,
       ValidateIssuer = true,
       ValidIssuer = configuration["JWT:Issuer"] ?? throw new ArgumentNullException("Jwt secret not found"),
       ValidateAudience = true,

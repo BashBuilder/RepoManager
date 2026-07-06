@@ -1,5 +1,6 @@
 using api.Data;
 using api.Extensions;
+using api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // add services
@@ -8,6 +9,7 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentityServices();
 builder.Services.AddCorsServices();
 builder.Services.AddJwtAuthenticationService(builder.Configuration);
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

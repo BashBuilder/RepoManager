@@ -12,9 +12,10 @@ public static class AppDbInitializer
         using var scope = app.Services.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        if (!await roleManager.RoleExistsAsync(RolesVM.Admin)) await roleManager.CreateAsync(new IdentityRole(RolesVM.Admin));
-        if (!await roleManager.RoleExistsAsync(RolesVM.Player)) await roleManager.CreateAsync(new IdentityRole(RolesVM.Player));
-        if (!await roleManager.RoleExistsAsync(RolesVM.User)) await roleManager.CreateAsync(new IdentityRole(RolesVM.User));
+        foreach (var role in RolesVM.All)
+        {
+            if (!await roleManager.RoleExistsAsync(role)) await roleManager.CreateAsync(new IdentityRole(role));
+        }
     }
 
 

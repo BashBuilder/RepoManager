@@ -11,8 +11,8 @@ using api.Data;
 namespace api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260705112047_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260705161422_initiralCreate")]
+    partial class initiralCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -167,6 +167,14 @@ namespace api.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
@@ -189,10 +197,6 @@ namespace api.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Scores")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
@@ -225,6 +229,9 @@ namespace api.Data.Migrations
                     b.Property<DateOnly>("ExpirationDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("GenreId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -234,14 +241,16 @@ namespace api.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GenreId");
+
                     b.ToTable("Games");
                 });
 
             modelBuilder.Entity("api.Models.Genre", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -254,27 +263,27 @@ namespace api.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Id = 1,
                             Name = "Action"
                         },
                         new
                         {
-                            Id = new Guid("11111111-2222-1111-1111-111111111111"),
+                            Id = 2,
                             Name = "Adventure"
                         },
                         new
                         {
-                            Id = new Guid("11111111-3333-1111-1111-111111111111"),
+                            Id = 3,
                             Name = "RPG"
                         },
                         new
                         {
-                            Id = new Guid("11111111-4444-1111-1111-111111111111"),
+                            Id = 4,
                             Name = "Arcade"
                         },
                         new
                         {
-                            Id = new Guid("11111111-5555-1111-1111-111111111111"),
+                            Id = 5,
                             Name = "Simulation"
                         });
                 });
@@ -328,6 +337,17 @@ namespace api.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("api.Models.Game", b =>
+                {
+                    b.HasOne("api.Models.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
                 });
 #pragma warning restore 612, 618
         }
