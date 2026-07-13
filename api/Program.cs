@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using api.Data;
 using api.Extensions;
 using api.Services;
@@ -22,7 +23,7 @@ app.UseAuthorization();
 app.UseCors(CorsServiceExtension.MyAllowSpecificOrigins);
 
 // map routes
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => $"Hello World! {RuntimeInformation.OSDescription} on {RuntimeInformation.OSArchitecture} ");
 app.MapControllers();
 
 app.SeedRolesAsync().Wait();

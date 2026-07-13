@@ -16,15 +16,12 @@ namespace api.Services;
 public class TokenService(
     AppDbContext dbContext,
     UserManager<AppUser> userManager,
-    IConfiguration configuration,
-    TokenValidationParameters validationParameters
-
+    IConfiguration configuration
 ) : ITokenService
 {
   private readonly IConfiguration _configuration = configuration;
   private readonly UserManager<AppUser> _userManager = userManager;
   private readonly AppDbContext _dbContext = dbContext;
-  private readonly TokenValidationParameters _validationParameter = validationParameters;
 
   public async Task<TokenResponseVM> GenerateTokenAsync(
     AppUser user, string? existingRefreshToken
@@ -100,8 +97,20 @@ public class TokenService(
     try
     {
       var jwtTokenHandler = new JwtSecurityTokenHandler();
+      var issuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["JWT:Secret"] ?? throw new ArgumentNullException("Jwt secret not found")));
+      var validationParameters = new TokenValidationParameters()
+      {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = issuerSigningKey,
+        ValidateIssuer = true,
+        ValidIssuer = configuration["JWT:Issuer"] ?? throw new ArgumentNullException("Jwt secret not found"),
+        ValidateAudience = true,
+        ValidAudience = configuration["JWT:Audience"] ?? throw new ArgumentNullException("Jwt secret not found"),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+      };
       //check jwt format
-      var tokenToValidate = jwtTokenHandler.ValidateToken(payload.Token, _validationParameter, out var validatedToken);
+      var tokenToValidate = jwtTokenHandler.ValidateToken(payload.Token, validationParameters, out var validatedToken);
       // validate encryption algorithm
       if (validatedToken is JwtSecurityToken jwtSecurityToken)
       {

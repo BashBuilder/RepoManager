@@ -90,15 +90,12 @@ public class AuthController(
 
       return Ok(result);
 
-
     }
     catch (Exception ex)
     {
       Console.WriteLine(ex.Message ?? "Something went wrong");
       return StatusCode(500, "Error while processing refresh toke");
     }
-
-    return Ok();
   }
 
   [HttpPost("reset-password")]
